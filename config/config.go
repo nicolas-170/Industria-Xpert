@@ -1,17 +1,26 @@
 package config
 
 import (
+	"log"
 	"os"
 	"strings"
+
+	"github.com/joho/godotenv"
 )
 
 type Config struct {
-	Port string
+	AppName string
+	Port    string
 }
 
 func InitConfig() *Config {
+	// Cargamos las variables de entorno
+	if err := godotenv.Load(".dev.env"); err != nil {
+		log.Fatal("Error cargando el archivo .dev.env: ", err)
+	}
 	return &Config{
-		Port: asignarStrOValorPorDefecto(os.Getenv("PORT"), "7777"),
+		AppName: asignarStrOValorPorDefecto(os.Getenv("APP_NAME"), "Industria-Xpert"),
+		Port:    asignarStrOValorPorDefecto(os.Getenv("PORT"), "7777"),
 	}
 }
 

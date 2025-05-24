@@ -8,18 +8,25 @@ import (
 )
 
 func main() {
-	// Iniciamos servidor con fiber
-	app := fiber.New()
-	// Añadirmos middlewares
-	middleware.SetupMiddlewares(app)
-	logger.Info("Iniciando servidor...")
+	// Iniciamos la configuraciob
+	cfg := config.InitConfig()
 
-	app.Get("/", func(c *fiber.Ctx) error {
-		return c.SendString("Hello, World!")
+	// Iniciamos servidor con fiber
+	appFiber := fiber.New(fiber.Config{
+		AppName: cfg.AppName,
 	})
 
-	cfg := config.InitConfig()
+	// Añadirmos middlewares
+	middleware.SetupMiddlewares(appFiber)
+	logger.Info("Iniciando servidor...")
+
+	// Agrupammos las rutas con el nombre de la aplicacion en el inicio de cada ruta
+	router := appFiber.Group("/" + cfg.AppName)
+
+	router.Get("/", func(c *fiber.Ctx) error {
+		return c.SendString("Inicio de la aplicacion " + cfg.AppName)
+	})
+
 	// Añadinos en escucha el puerto definido en las ENV
-	err := app.Listen(":" + cfg.Port)
-	logger.Fatal(err)
+	logger.Fatal(appFiber.Listen(":" + cfg.Port))
 }

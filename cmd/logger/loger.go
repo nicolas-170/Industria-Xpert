@@ -10,7 +10,7 @@ import (
 // Logger es una instancia global de zerolog.
 // El cual nos va a dar los logs de cada proceso o informacion deseada
 var log *zerolog.Logger
-var ErrLoggerNotInitialized = errors.New("logger no inicialiazdo: Usa primero su NewLogger()")
+var ErrLoggerNotInitialized = errors.New("logger no inicialiazdo: Usar NewLogger(), para inicializarlo")
 
 // inicializa el logger con color
 func NewLogger() {
