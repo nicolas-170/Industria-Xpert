@@ -5,6 +5,7 @@ import (
 	"github.com/nicolas-170/Industria-Xpert/cmd/logger"
 	"github.com/nicolas-170/Industria-Xpert/cmd/middleware"
 	"github.com/nicolas-170/Industria-Xpert/config"
+	"github.com/nicolas-170/Industria-Xpert/internal/shared/db"
 )
 
 func main() {
@@ -19,6 +20,11 @@ func main() {
 	// Añadirmos middlewares
 	middleware.SetupMiddlewares(appFiber)
 	logger.Info("Iniciando servidor...")
+
+	// Iniciamos la conecion a la base de datos
+	baseDeDatos := db.NewDb(cfg.ConfigDb)
+	// Cerramos la sesion en caso de error con el defer
+	defer baseDeDatos.Close()
 
 	// Agrupammos las rutas con el nombre de la aplicacion en el inicio de cada ruta
 	router := appFiber.Group("/" + cfg.AppName)

@@ -9,8 +9,16 @@ import (
 )
 
 type Config struct {
-	AppName string
-	Port    string
+	AppName  string
+	Port     string
+	ConfigDb ConfigDb
+}
+
+type ConfigDb struct {
+	DbUser     string
+	DbPassword string
+	DbHost     string
+	DbName     string
 }
 
 func InitConfig() *Config {
@@ -21,6 +29,12 @@ func InitConfig() *Config {
 	return &Config{
 		AppName: asignarStrOValorPorDefecto(os.Getenv("APP_NAME"), "Industria-Xpert"),
 		Port:    asignarStrOValorPorDefecto(os.Getenv("PORT"), "7777"),
+		ConfigDb: ConfigDb{
+			DbUser:     asignarStrOValorPorDefecto(os.Getenv("DB_USER"), "root"),
+			DbPassword: os.Getenv("DB_PASSWORD"),
+			DbHost:     asignarStrOValorPorDefecto(os.Getenv("DB_HOST"), "localhost:3306"),
+			DbName:     os.Getenv("DB_NAME"),
+		},
 	}
 }
 
