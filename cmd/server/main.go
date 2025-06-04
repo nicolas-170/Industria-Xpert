@@ -5,11 +5,12 @@ import (
 	"github.com/nicolas-170/Industria-Xpert/cmd/logger"
 	"github.com/nicolas-170/Industria-Xpert/cmd/middleware"
 	"github.com/nicolas-170/Industria-Xpert/config"
+	"github.com/nicolas-170/Industria-Xpert/internal/services"
 	"github.com/nicolas-170/Industria-Xpert/internal/shared/db"
 )
 
 func main() {
-	// Iniciamos la configuraciob
+	// Iniciamos la configuracion
 	cfg := config.InitConfig()
 
 	// Iniciamos servidor con fiber
@@ -32,6 +33,9 @@ func main() {
 	router.Get("/", func(c *fiber.Ctx) error {
 		return c.SendString("Inicio de la aplicacion " + cfg.AppName)
 	})
+
+	// Iniciamos los servicioa que vamos a consumir
+	services.Init(baseDeDatos, router)
 
 	// Añadinos en escucha el puerto definido en las ENV
 	logger.Fatal(appFiber.Listen(":" + cfg.Port))

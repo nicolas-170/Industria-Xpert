@@ -1,6 +1,6 @@
 CREATE TABLE cliente (
   id_cliente VARCHAR(50) PRIMARY KEY,
-  celular INT,
+  celular VARCHAR(15),
   nombre VARCHAR(100),
   correo VARCHAR(256),
   identificacion VARCHAR(100),
