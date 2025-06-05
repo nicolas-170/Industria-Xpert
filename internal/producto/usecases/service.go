@@ -13,8 +13,8 @@ func NewProductoService(repository repository.ProductoRepository) *ProductoServi
 	return &ProductoService{repository}
 }
 
-func (s *ProductoService) Save(cliente *model.Producto) error {
-	return s.repository.Save(cliente)
+func (s *ProductoService) Save(producto *model.Producto) error {
+	return s.repository.Save(producto)
 }
 
 func (s *ProductoService) Obtener(idProducto string) (*model.Producto, error) {

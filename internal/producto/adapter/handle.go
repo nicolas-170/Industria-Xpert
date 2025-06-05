@@ -17,7 +17,7 @@ func NewProductoHandler(service *usecases.ProductoService) *ProductoHandler {
 func (h *ProductoHandler) Save(c *fiber.Ctx) error {
 	var producto model.Producto
 	if err := c.BodyParser(&producto); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Datos inválidos"})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Datos inválidos, porque: " + err.Error()})
 	}
 
 	if err := h.service.Save(&producto); err != nil {

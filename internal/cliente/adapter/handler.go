@@ -17,13 +17,11 @@ func NewClienteHandler(service *usecases.ClienteService) *ClienteHandler {
 func (h *ClienteHandler) Save(c *fiber.Ctx) error {
 	var cliente model.Cliente
 	if err := c.BodyParser(&cliente); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Datos inválidos"})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Datos inválidos, porque: " + err.Error()})
 	}
-
 	if err := h.service.Save(&cliente); err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Error al crear, porque: " + err.Error()})
 	}
-
 	return c.Status(fiber.StatusCreated).JSON(cliente)
 }
 

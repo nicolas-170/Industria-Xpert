@@ -17,7 +17,7 @@ func NewContactoHandler(service *usecases.ContactoService) *ContactoHandler {
 func (h *ContactoHandler) Save(c *fiber.Ctx) error {
 	var contacto model.Contacto
 	if err := c.BodyParser(&contacto); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Datos inválidos"})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Datos inválidos, porque: " + err.Error()})
 	}
 
 	if err := h.service.Save(&contacto); err != nil {

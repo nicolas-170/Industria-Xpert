@@ -16,20 +16,30 @@ import (
 	contactoAdapter "github.com/nicolas-170/Industria-Xpert/internal/contacto/adapter"
 	contactoRepo "github.com/nicolas-170/Industria-Xpert/internal/contacto/adapter/repository"
 	contactoUsecase "github.com/nicolas-170/Industria-Xpert/internal/contacto/usecases"
+
+	carritoAdapter "github.com/nicolas-170/Industria-Xpert/internal/carrito/adapter"
+	carritoRepo "github.com/nicolas-170/Industria-Xpert/internal/carrito/adapter/repository"
+	carritoUsecase "github.com/nicolas-170/Industria-Xpert/internal/carrito/usecases"
 )
 
 func Init(baseDeDatos *sql.DB, router fiber.Router) {
+	// Se inicializan repositorios, de uso por varios casos de uso
+	clienteRepo := clienteRepo.NewClienteRepository(baseDeDatos)
+	productoRepo := productoRepo.NewProductoRepository(baseDeDatos)
+
 	// Servicios de cliente
-	initCliente(baseDeDatos, router)
+	initCliente(baseDeDatos, router, clienteRepo)
 	// Servicios producto
-	initProducto(baseDeDatos, router)
+	initProducto(baseDeDatos, router, productoRepo)
 	// Servicios de contacto
 	initContacto(baseDeDatos, router)
+	// Servicios de carrito
+	initCarrito(baseDeDatos, router, clienteRepo, productoRepo)
 }
 
-func initCliente(baseDeDatos *sql.DB, router fiber.Router) {
+func initCliente(baseDeDatos *sql.DB, router fiber.Router, clienteRepo clienteRepo.ClienteRepository) {
 	logger.Info("Se inician servicios de cliente...")
-	clienteRepo := clienteRepo.NewClienteRepository(baseDeDatos)
+
 	clienteService := clienteUsecase.NewClienteService(clienteRepo)
 	clienteHandler := clienteAdapter.NewClienteHandler(clienteService)
 
@@ -40,9 +50,9 @@ func initCliente(baseDeDatos *sql.DB, router fiber.Router) {
 	clienteGroup.Get("/:id_cliente", clienteHandler.Obtener)
 }
 
-func initProducto(baseDeDatos *sql.DB, router fiber.Router) {
+func initProducto(baseDeDatos *sql.DB, router fiber.Router, productoRepo productoRepo.ProductoRepository) {
 	logger.Info("Se inician servicios de producto...")
-	productoRepo := productoRepo.NewProductoRepository(baseDeDatos)
+
 	productoService := productoUsecase.NewProductoService(productoRepo)
 	productoHandler := productoAdapter.NewProductoHandler(productoService)
 
@@ -64,4 +74,17 @@ func initContacto(baseDeDatos *sql.DB, router fiber.Router) {
 
 	contactoGroup.Post("/", contactoHandler.Save)
 	contactoGroup.Get("/:id_contacto", contactoHandler.Obtener)
+}
+
+func initCarrito(baseDeDatos *sql.DB, router fiber.Router, clienteRepo clienteRepo.ClienteRepository, productoRepo productoRepo.ProductoRepository) {
+	logger.Info("Se inician servicios de carrito...")
+	carritoRepo := carritoRepo.NewCarritoRepository(baseDeDatos)
+	carritoService := carritoUsecase.NewCarritoService(carritoRepo, productoRepo, clienteRepo)
+	carritoHandler := carritoAdapter.NewCarritoHandler(carritoService)
+
+	// Ruta para procesar las peticiones de carritos
+	carritoGroup := router.Group("/carritos")
+
+	carritoGroup.Post("/", carritoHandler.Save)
+	carritoGroup.Get("/:id_carrito", carritoHandler.Obtener)
 }
