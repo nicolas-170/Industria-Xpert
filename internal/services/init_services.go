@@ -12,6 +12,10 @@ import (
 	productoAdapter "github.com/nicolas-170/Industria-Xpert/internal/producto/adapter"
 	productoRepo "github.com/nicolas-170/Industria-Xpert/internal/producto/adapter/repository"
 	productoUsecase "github.com/nicolas-170/Industria-Xpert/internal/producto/usecases"
+
+	contactoAdapter "github.com/nicolas-170/Industria-Xpert/internal/contacto/adapter"
+	contactoRepo "github.com/nicolas-170/Industria-Xpert/internal/contacto/adapter/repository"
+	contactoUsecase "github.com/nicolas-170/Industria-Xpert/internal/contacto/usecases"
 )
 
 func Init(baseDeDatos *sql.DB, router fiber.Router) {
@@ -19,6 +23,8 @@ func Init(baseDeDatos *sql.DB, router fiber.Router) {
 	initCliente(baseDeDatos, router)
 	// Servicios producto
 	initProducto(baseDeDatos, router)
+	// Servicios de contacto
+	initContacto(baseDeDatos, router)
 }
 
 func initCliente(baseDeDatos *sql.DB, router fiber.Router) {
@@ -27,6 +33,7 @@ func initCliente(baseDeDatos *sql.DB, router fiber.Router) {
 	clienteService := clienteUsecase.NewClienteService(clienteRepo)
 	clienteHandler := clienteAdapter.NewClienteHandler(clienteService)
 
+	// Ruta para procesar las peticiones de clientes
 	clienteGroup := router.Group("/clientes")
 
 	clienteGroup.Post("/", clienteHandler.Save)
@@ -39,8 +46,22 @@ func initProducto(baseDeDatos *sql.DB, router fiber.Router) {
 	productoService := productoUsecase.NewProductoService(productoRepo)
 	productoHandler := productoAdapter.NewProductoHandler(productoService)
 
+	// Ruta para procesar las peticiones de productos
 	productoGroup := router.Group("/productos")
 
 	productoGroup.Post("/", productoHandler.Save)
 	productoGroup.Get("/:id_producto", productoHandler.Obtener)
+}
+
+func initContacto(baseDeDatos *sql.DB, router fiber.Router) {
+	logger.Info("Se inician servicios de contacto...")
+	contactoRepo := contactoRepo.NewContactoRepository(baseDeDatos)
+	contactoService := contactoUsecase.NewContactoService(contactoRepo)
+	contactoHandler := contactoAdapter.NewContactoHandler(contactoService)
+
+	// Ruta para procesar las peticiones de contactos
+	contactoGroup := router.Group("/contactos")
+
+	contactoGroup.Post("/", contactoHandler.Save)
+	contactoGroup.Get("/:id_contacto", contactoHandler.Obtener)
 }
