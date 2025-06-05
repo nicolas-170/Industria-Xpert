@@ -2,7 +2,6 @@ package repository
 
 import (
 	"database/sql"
-	"fmt"
 
 	"github.com/google/uuid"
 	"github.com/nicolas-170/Industria-Xpert/internal/cliente/domain/model"
@@ -25,7 +24,6 @@ func (r *clienteRepositoryDB) Save(cliente *model.Cliente) error {
 	if cliente.IdCliente == "" {
 		cliente.IdCliente = uuid.NewString()
 	}
-	fmt.Println("cliente.Celular", cliente.Celular)
 	_, err := r.db.Exec("INSERT INTO cliente (id_cliente, celular, nombre, correo, identificacion, direccion) VALUES (?, ?, ?, ?, ?, ?)",
 		cliente.IdCliente, cliente.Celular, cliente.Nombre, cliente.Correo, cliente.Identificacion, cliente.Direccion)
 	return err
