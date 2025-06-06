@@ -23,7 +23,19 @@ func (h *ContactoHandler) Save(c *fiber.Ctx) error {
 	if err := h.service.Save(&contacto); err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Error al crear, porque: " + err.Error()})
 	}
-	return c.Status(fiber.StatusCreated).JSON(contacto)
+	return c.Status(fiber.StatusOK).JSON(contacto)
+}
+
+func (h *ContactoHandler) Delete(c *fiber.Ctx) error {
+	var contacto model.Contacto
+	if err := c.BodyParser(&contacto); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Datos inválidos, porque: " + err.Error()})
+	}
+
+	if err := h.service.Delete(&contacto); err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Error al eliminar, porque: " + err.Error()})
+	}
+	return c.Status(fiber.StatusOK).JSON(contacto)
 }
 
 func (h *ContactoHandler) Obtener(c *fiber.Ctx) error {

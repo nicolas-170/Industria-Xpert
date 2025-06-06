@@ -9,6 +9,8 @@ import (
 
 type CarritoRepository interface {
 	Save(carrito *model.Carrito) error
+	Delete(carrito *model.Carrito) error
+
 	GetByID(idCarrito string) (*model.Carrito, error)
 }
 
@@ -26,6 +28,11 @@ func (r *carritoRepositoryDB) Save(carrito *model.Carrito) error {
 	}
 	_, err := r.db.Exec("INSERT INTO carrito (id_carrito, id_producto, id_cliente, fecha) VALUES (?, ?, ?, ?)",
 		carrito.IdCarrito, carrito.IdProducto, carrito.IdCliente, carrito.Fecha)
+	return err
+}
+
+func (r *carritoRepositoryDB) Delete(carrito *model.Carrito) error {
+	_, err := r.db.Exec("DELETE FROM carrito WHERE id_carrito = ?", carrito.IdCarrito)
 	return err
 }
 

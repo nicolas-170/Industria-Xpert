@@ -17,6 +17,10 @@ func (s *ProductoService) Save(producto *model.Producto) error {
 	return s.repository.Save(producto)
 }
 
+func (s *ProductoService) Delete(producto *model.Producto) error {
+	return s.repository.Delete(producto)
+}
+
 func (s *ProductoService) Obtener(idProducto string) (*model.Producto, error) {
 	return s.repository.GetByID(idProducto)
 }

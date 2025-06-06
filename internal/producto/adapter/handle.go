@@ -23,7 +23,19 @@ func (h *ProductoHandler) Save(c *fiber.Ctx) error {
 	if err := h.service.Save(&producto); err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Error al crear, porque: " + err.Error()})
 	}
-	return c.Status(fiber.StatusCreated).JSON(producto)
+	return c.Status(fiber.StatusOK).JSON(producto)
+}
+
+func (h *ProductoHandler) Delete(c *fiber.Ctx) error {
+	var producto model.Producto
+	if err := c.BodyParser(&producto); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Datos inválidos, porque: " + err.Error()})
+	}
+
+	if err := h.service.Delete(&producto); err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Error al eliminar, porque: " + err.Error()})
+	}
+	return c.Status(fiber.StatusOK).JSON(producto)
 }
 
 func (h *ProductoHandler) Obtener(c *fiber.Ctx) error {

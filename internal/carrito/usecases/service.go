@@ -41,6 +41,10 @@ func (s *CarritoService) Save(carrito *model.Carrito) error {
 	return s.carritoRepository.Save(carrito)
 }
 
+func (s *CarritoService) Delete(carrito *model.Carrito) error {
+	return s.carritoRepository.Delete(carrito)
+}
+
 func (s *CarritoService) Obtener(idCarrito string) (*model.Carrito, error) {
 	return s.carritoRepository.GetByID(idCarrito)
 }

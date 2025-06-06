@@ -9,6 +9,8 @@ import (
 
 type ProductoRepository interface {
 	Save(producto *model.Producto) error
+	Delete(cliente *model.Producto) error
+
 	GetByID(idProducto string) (*model.Producto, error)
 }
 
@@ -26,6 +28,11 @@ func (r *ProductoRepositoryDB) Save(producto *model.Producto) error {
 	}
 	_, err := r.db.Exec("INSERT INTO producto (id_producto, nombre, talla, color, cantidad, tipo) VALUES (?, ?, ?, ?, ?, ?)",
 		producto.IdProducto, producto.Nombre, producto.Talla, producto.Color, producto.Cantidad, producto.Tipo)
+	return err
+}
+
+func (r *ProductoRepositoryDB) Delete(cliente *model.Producto) error {
+	_, err := r.db.Exec("DELETE FROM producto WHERE id_producto = ?", cliente.IdProducto)
 	return err
 }
 

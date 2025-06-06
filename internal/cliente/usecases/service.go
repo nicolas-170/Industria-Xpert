@@ -17,6 +17,10 @@ func (s *ClienteService) Save(cliente *model.Cliente) error {
 	return s.repository.Save(cliente)
 }
 
+func (s *ClienteService) Delete(cliente *model.Cliente) error {
+	return s.repository.Delete(cliente)
+}
+
 func (s *ClienteService) Obtener(idCliente string) (*model.Cliente, error) {
 	return s.repository.GetByID(idCliente)
 }

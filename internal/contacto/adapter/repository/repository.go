@@ -9,6 +9,8 @@ import (
 
 type ContactoRepository interface {
 	Save(contacto *model.Contacto) error
+	Delete(carrito *model.Contacto) error
+
 	GetByID(idContacto string) (*model.Contacto, error)
 }
 
@@ -26,6 +28,10 @@ func (r *contactoRepositoryDB) Save(contacto *model.Contacto) error {
 	}
 	_, err := r.db.Exec("INSERT INTO contacto (id_contacto, whatsapp, correo, direccion) VALUES (?, ?, ?, ?)",
 		contacto.IdContacto, contacto.Whatsapp, contacto.Correo, contacto.Direccion)
+	return err
+}
+func (r *contactoRepositoryDB) Delete(carrito *model.Contacto) error {
+	_, err := r.db.Exec("DELETE FROM contacto WHERE id_contacto = ?", carrito.IdContacto)
 	return err
 }
 

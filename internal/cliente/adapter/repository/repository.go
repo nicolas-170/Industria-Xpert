@@ -9,6 +9,8 @@ import (
 
 type ClienteRepository interface {
 	Save(cliente *model.Cliente) error
+	Delete(cliente *model.Cliente) error
+
 	GetByID(idCliente string) (*model.Cliente, error)
 }
 
@@ -26,6 +28,11 @@ func (r *clienteRepositoryDB) Save(cliente *model.Cliente) error {
 	}
 	_, err := r.db.Exec("INSERT INTO cliente (id_cliente, celular, nombre, correo, identificacion, direccion) VALUES (?, ?, ?, ?, ?, ?)",
 		cliente.IdCliente, cliente.Celular, cliente.Nombre, cliente.Correo, cliente.Identificacion, cliente.Direccion)
+	return err
+}
+
+func (r *clienteRepositoryDB) Delete(cliente *model.Cliente) error {
+	_, err := r.db.Exec("DELETE FROM cliente WHERE id_cliente = ?", cliente.IdCliente)
 	return err
 }
 

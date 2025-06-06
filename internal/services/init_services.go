@@ -28,16 +28,16 @@ func Init(baseDeDatos *sql.DB, router fiber.Router) {
 	productoRepo := productoRepo.NewProductoRepository(baseDeDatos)
 
 	// Servicios de cliente
-	initCliente(baseDeDatos, router, clienteRepo)
+	initCliente(router, clienteRepo)
 	// Servicios producto
-	initProducto(baseDeDatos, router, productoRepo)
+	initProducto(router, productoRepo)
 	// Servicios de contacto
 	initContacto(baseDeDatos, router)
 	// Servicios de carrito
 	initCarrito(baseDeDatos, router, clienteRepo, productoRepo)
 }
 
-func initCliente(baseDeDatos *sql.DB, router fiber.Router, clienteRepo clienteRepo.ClienteRepository) {
+func initCliente(router fiber.Router, clienteRepo clienteRepo.ClienteRepository) {
 	logger.Info("Se inician servicios de cliente...")
 
 	clienteService := clienteUsecase.NewClienteService(clienteRepo)
@@ -48,9 +48,10 @@ func initCliente(baseDeDatos *sql.DB, router fiber.Router, clienteRepo clienteRe
 
 	clienteGroup.Post("/", clienteHandler.Save)
 	clienteGroup.Get("/:id_cliente", clienteHandler.Obtener)
+	clienteGroup.Delete("/", clienteHandler.Delete)
 }
 
-func initProducto(baseDeDatos *sql.DB, router fiber.Router, productoRepo productoRepo.ProductoRepository) {
+func initProducto(router fiber.Router, productoRepo productoRepo.ProductoRepository) {
 	logger.Info("Se inician servicios de producto...")
 
 	productoService := productoUsecase.NewProductoService(productoRepo)
@@ -61,6 +62,7 @@ func initProducto(baseDeDatos *sql.DB, router fiber.Router, productoRepo product
 
 	productoGroup.Post("/", productoHandler.Save)
 	productoGroup.Get("/:id_producto", productoHandler.Obtener)
+	productoGroup.Delete("/", productoHandler.Delete)
 }
 
 func initContacto(baseDeDatos *sql.DB, router fiber.Router) {
@@ -74,6 +76,7 @@ func initContacto(baseDeDatos *sql.DB, router fiber.Router) {
 
 	contactoGroup.Post("/", contactoHandler.Save)
 	contactoGroup.Get("/:id_contacto", contactoHandler.Obtener)
+	contactoGroup.Delete("/", contactoHandler.Delete)
 }
 
 func initCarrito(baseDeDatos *sql.DB, router fiber.Router, clienteRepo clienteRepo.ClienteRepository, productoRepo productoRepo.ProductoRepository) {
@@ -87,4 +90,5 @@ func initCarrito(baseDeDatos *sql.DB, router fiber.Router, clienteRepo clienteRe
 
 	carritoGroup.Post("/", carritoHandler.Save)
 	carritoGroup.Get("/:id_carrito", carritoHandler.Obtener)
+	carritoGroup.Delete("/", carritoHandler.Delete)
 }
