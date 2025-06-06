@@ -1,10 +1,10 @@
 package model
 
 type Producto struct {
-	IdProducto string `json:"id_producto"`
-	Nombre     string `json:"nombre"`
-	Talla      string `json:"talla"`
-	Color      string `json:"color"`
-	Cantidad   string `json:"cantidad"`
-	Tipo       string `json:"tipo"`
+	IdProducto string `json:"id_producto,omitempty"`
+	Nombre     string `json:"nombre,omitempty"`
+	Talla      string `json:"talla,omitempty"`
+	Color      string `json:"color,omitempty"`
+	Cantidad   string `json:"cantidad,omitempty"`
+	Tipo       string `json:"tipo,omitempty"`
 }
