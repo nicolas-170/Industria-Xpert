@@ -26,8 +26,8 @@ func (r *clienteRepositoryDB) Save(cliente *model.Cliente) error {
 	if cliente.IdCliente == "" {
 		cliente.IdCliente = uuid.NewString()
 	}
-	_, err := r.db.Exec("INSERT INTO cliente (id_cliente, celular, nombre, correo, identificacion, direccion) VALUES (?, ?, ?, ?, ?, ?)",
-		cliente.IdCliente, cliente.Celular, cliente.Nombre, cliente.Correo, cliente.Identificacion, cliente.Direccion)
+	_, err := r.db.Exec("INSERT INTO cliente (id_cliente, celular, nombre, correo, identificacion, direccion, password) VALUES (?, ?, ?, ?, ?, ?, ?)",
+		cliente.IdCliente, cliente.Celular, cliente.Nombre, cliente.Correo, cliente.Identificacion, cliente.Direccion, cliente.Password)
 	return err
 }
 

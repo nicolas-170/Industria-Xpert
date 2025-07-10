@@ -22,7 +22,7 @@ type ConfigDb struct {
 }
 
 func InitConfig() *Config {
-	// Cargamos las variables de entorno
+	// Cargamos las variables de entorno o valores del archivo .dev.env
 	if err := godotenv.Load(".dev.env"); err != nil {
 		log.Fatal("Error cargando el archivo .dev.env: ", err)
 	}
@@ -44,3 +44,4 @@ func asignarStrOValorPorDefecto(str, porDefecto string) string {
 	}
 	return porDefecto
 }
+// 

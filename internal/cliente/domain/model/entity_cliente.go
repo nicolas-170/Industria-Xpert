@@ -7,4 +7,5 @@ type Cliente struct {
 	Correo         string `json:"correo,omitempty"`
 	Identificacion string `json:"identificacion,omitempty"`
 	Direccion      string `json:"direccion,omitempty"`
+	Password       string `json:"password,omitempty"`
 }

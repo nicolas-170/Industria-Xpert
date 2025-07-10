@@ -5,6 +5,7 @@ CREATE TABLE cliente (
   correo VARCHAR(256),
   identificacion VARCHAR(100),
   direccion VARCHAR(150)
+  password VARCHAR(120)
 );
 
 CREATE TABLE producto (
