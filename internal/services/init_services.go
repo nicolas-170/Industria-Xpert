@@ -49,6 +49,9 @@ func initCliente(router fiber.Router, clienteRepo clienteRepo.ClienteRepository)
 	clienteGroup.Post("/", clienteHandler.Save)
 	clienteGroup.Get("/:id_cliente", clienteHandler.Obtener)
 	clienteGroup.Delete("/", clienteHandler.Delete)
+
+	// Autenticarse
+	clienteGroup.Post("/autenticarse", clienteHandler.Autenticarse)
 }
 
 func initProducto(router fiber.Router, productoRepo productoRepo.ProductoRepository) {

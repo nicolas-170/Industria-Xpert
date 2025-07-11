@@ -2,7 +2,7 @@ CREATE TABLE cliente (
   id_cliente VARCHAR(50) PRIMARY KEY,
   celular VARCHAR(15),
   nombre VARCHAR(100),
-  correo VARCHAR(256),
+  correo VARCHAR(256) UNIQUE,
   identificacion VARCHAR(100),
   direccion VARCHAR(150)
   password VARCHAR(120)

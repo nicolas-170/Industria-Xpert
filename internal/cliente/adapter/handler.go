@@ -47,3 +47,15 @@ func (h *ClienteHandler) Obtener(c *fiber.Ctx) error {
 	}
 	return c.JSON(cliente)
 }
+
+func (h *ClienteHandler) Autenticarse(c *fiber.Ctx) error {
+	var autenticarse model.Autenticarse
+	if err := c.BodyParser(&autenticarse); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Datos inválidos, porque: " + err.Error()})
+	}
+	cliente, err := h.service.Autenticarse(autenticarse)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Error al autenticarse, porque: " + err.Error()})
+	}
+	return c.Status(fiber.StatusOK).JSON(cliente)
+}
