@@ -12,7 +12,7 @@ type ClienteRepository interface {
 	Delete(cliente *model.Cliente) error
 
 	GetByID(idCliente string) (*model.Cliente, error)
-	GetByCorreo(correo string) (*model.Cliente, error)
+	GetByCorreo(correo string) (model.Cliente, error)
 }
 
 type clienteRepositoryDB struct {
@@ -47,12 +47,12 @@ func (r *clienteRepositoryDB) GetByID(idCliente string) (*model.Cliente, error) 
 	return cliente, err
 }
 
-func (r *clienteRepositoryDB) GetByCorreo(correo string) (*model.Cliente, error) {
+func (r *clienteRepositoryDB) GetByCorreo(correo string) (model.Cliente, error) {
 	row := r.db.QueryRow("SELECT * FROM cliente WHERE correo = ?", correo)
-	cliente := &model.Cliente{}
+	cliente := model.Cliente{}
 	err := row.Scan(&cliente.IdCliente, &cliente.Celular, &cliente.Nombre, &cliente.Correo, &cliente.Identificacion, &cliente.Direccion, &cliente.Password)
 	if err == sql.ErrNoRows {
-		return nil, nil
+		return model.Cliente{}, nil
 	}
 	return cliente, err
 }

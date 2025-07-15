@@ -1,6 +1,8 @@
 package usecases
 
 import (
+	"errors"
+
 	"github.com/nicolas-170/Industria-Xpert/internal/cliente/adapter/repository"
 	"github.com/nicolas-170/Industria-Xpert/internal/cliente/domain/model"
 	"golang.org/x/crypto/bcrypt"
@@ -37,11 +39,14 @@ func (s *ClienteService) Autenticarse(autenticarse model.Autenticarse) (model.Cl
 	if err != nil {
 		return model.Cliente{}, err
 	}
+	if cliente.Nombre == "" {
+		return model.Cliente{}, errors.New("No se encontro el cliente con el correo:" + autenticarse.Correo)
+	}
 	// Validamos la password
 	if err = bcrypt.CompareHashAndPassword([]byte(cliente.Password), []byte(autenticarse.Password)); err != nil {
 		return model.Cliente{}, err
 	}
 	// Blanqueamos la password, por que no se necesario mostrarla, solo validarla
 	cliente.Password = ""
-	return *cliente, nil
+	return cliente, nil
 }

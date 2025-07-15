@@ -55,7 +55,7 @@ func (h *ClienteHandler) Autenticarse(c *fiber.Ctx) error {
 	}
 	cliente, err := h.service.Autenticarse(autenticarse)
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Error al autenticarse, porque: " + err.Error()})
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "Error al autenticarse, porque: " + err.Error()})
 	}
 	return c.Status(fiber.StatusOK).JSON(cliente)
 }
