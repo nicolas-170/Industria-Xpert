@@ -24,3 +24,7 @@ func (s *ProductoService) Delete(producto *model.Producto) error {
 func (s *ProductoService) Obtener(idProducto string) (*model.Producto, error) {
 	return s.repository.GetByID(idProducto)
 }
+
+func (s *ProductoService) ObtenerTodos() ([]model.Producto, error) {
+	return s.repository.GetAll()
+}

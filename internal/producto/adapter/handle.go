@@ -49,3 +49,14 @@ func (h *ProductoHandler) Obtener(c *fiber.Ctx) error {
 	}
 	return c.JSON(producto)
 }
+
+func (h *ProductoHandler) ObtenerTodos(c *fiber.Ctx) error {
+	productos, err := h.service.ObtenerTodos()
+	if err != nil {
+		return c.Status(500).JSON(fiber.Map{"error": "Error al obtener: " + err.Error()})
+	}
+	if productos == nil {
+		return c.Status(201).Next()
+	}
+	return c.JSON(productos)
+}

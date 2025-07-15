@@ -12,6 +12,7 @@ type ProductoRepository interface {
 	Delete(cliente *model.Producto) error
 
 	GetByID(idProducto string) (*model.Producto, error)
+	GetAll() ([]model.Producto, error)
 }
 
 type ProductoRepositoryDB struct {
@@ -45,4 +46,25 @@ func (r *ProductoRepositoryDB) GetByID(idProducto string) (*model.Producto, erro
 		return nil, nil
 	}
 	return producto, err
+}
+
+func (r *ProductoRepositoryDB) GetAll() ([]model.Producto, error) {
+	rows, err := r.db.Query("SELECT id_producto, nombre, talla, color, cantidad, tipo FROM producto")
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	productos := []model.Producto{}
+	for rows.Next() {
+		var p model.Producto
+		if err = rows.Scan(&p.IdProducto, &p.Nombre, &p.Talla, &p.Color, &p.Cantidad, &p.Tipo); err != nil {
+			rows.Close()
+			return nil, err
+		}
+		productos = append(productos, p)
+	}
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+	return productos, nil
 }

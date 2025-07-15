@@ -63,8 +63,10 @@ func initProducto(router fiber.Router, productoRepo productoRepo.ProductoReposit
 	// Ruta para procesar las peticiones de productos
 	productoGroup := router.Group("/productos")
 
-	productoGroup.Post("/", productoHandler.Save)
+	productoGroup.Get("/obtener-todos", productoHandler.ObtenerTodos)
 	productoGroup.Get("/:id_producto", productoHandler.Obtener)
+
+	productoGroup.Post("/", productoHandler.Save)
 	productoGroup.Delete("/", productoHandler.Delete)
 }
 
