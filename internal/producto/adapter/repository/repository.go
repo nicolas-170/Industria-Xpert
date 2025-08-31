@@ -49,7 +49,7 @@ func (r *ProductoRepositoryDB) GetByID(idProducto string) (*model.Producto, erro
 }
 
 func (r *ProductoRepositoryDB) GetAll() ([]model.Producto, error) {
-	rows, err := r.db.Query("SELECT id_producto, nombre, talla, color, cantidad, tipo FROM producto")
+	rows, err := r.db.Query("SELECT id_producto, nombre, talla, color, cantidad, tipo, precio FROM producto")
 	if err != nil {
 		return nil, err
 	}
@@ -57,7 +57,7 @@ func (r *ProductoRepositoryDB) GetAll() ([]model.Producto, error) {
 	productos := []model.Producto{}
 	for rows.Next() {
 		var p model.Producto
-		if err = rows.Scan(&p.IdProducto, &p.Nombre, &p.Talla, &p.Color, &p.Cantidad, &p.Tipo); err != nil {
+		if err = rows.Scan(&p.IdProducto, &p.Nombre, &p.Talla, &p.Color, &p.Cantidad, &p.Tipo, &p.Precio); err != nil {
 			rows.Close()
 			return nil, err
 		}
