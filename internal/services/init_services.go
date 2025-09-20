@@ -20,6 +20,8 @@ import (
 	carritoAdapter "github.com/nicolas-170/Industria-Xpert/internal/carrito/adapter"
 	carritoRepo "github.com/nicolas-170/Industria-Xpert/internal/carrito/adapter/repository"
 	carritoUsecase "github.com/nicolas-170/Industria-Xpert/internal/carrito/usecases"
+
+	gmailApartadoRepo "github.com/nicolas-170/Industria-Xpert/internal/gmail-apartado/adapter/repository"
 )
 
 func Init(baseDeDatos *sql.DB, router fiber.Router) {
@@ -96,4 +98,9 @@ func initCarrito(baseDeDatos *sql.DB, router fiber.Router, clienteRepo clienteRe
 	carritoGroup.Post("/", carritoHandler.Save)
 	carritoGroup.Get("/:id_carrito", carritoHandler.Obtener)
 	carritoGroup.Delete("/", carritoHandler.Delete)
+}
+
+func initGmailApartado(baseDeDatos *sql.DB, router fiber.Router,gmailApartadoRepo gmailApartadoRepo.GmailApartadoRepository){
+	logger.Info("Se inicia servicios de gmail apartado...")
+	
 }

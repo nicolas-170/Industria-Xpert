@@ -45,16 +45,3 @@ func (r *contactoRepositoryDB) GetByID(idContacto string) (*model.Contacto, erro
 	}
 	return contacto, err
 }
-
-// func (r *contactoRepositoryDB) GetAll() ([]model.Contacto, error) {
-// 	rows, err := r.db.Query("SELECT id_contacto, whatsapp, correo, direccion FROM contacto")
-// 	if err != nil {
-// 		return nil, err
-// 	}
-// 	contacto := &model.Contacto{}
-// 	err := row.Scan(&contacto.IdContacto, &contacto.Whatsapp, &contacto.Correo, &contacto.Direccion)
-// 	if err == sql.ErrNoRows {
-// 		return nil, nil
-// 	}
-// 	return contacto, err
-// }

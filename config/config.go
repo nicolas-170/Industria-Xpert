@@ -12,6 +12,12 @@ type Config struct {
 	AppName  string
 	Port     string
 	ConfigDb ConfigDb
+	Email    Email
+}
+
+type Email struct {
+	EmailSend     string
+	EmailPassword string
 }
 
 type ConfigDb struct {
@@ -35,6 +41,10 @@ func InitConfig() *Config {
 			DbHost:     asignarStrOValorPorDefecto(os.Getenv("DB_HOST"), "localhost:3306"),
 			DbName:     os.Getenv("DB_NAME"),
 		},
+		Email: Email{
+			EmailSend: os.Getenv("EMAIL_SEND"), 
+			EmailPassword: os.Getenv("EMAIL_PASSWORD"),
+		},
 	}
 }
 
@@ -44,4 +54,5 @@ func asignarStrOValorPorDefecto(str, porDefecto string) string {
 	}
 	return porDefecto
 }
-// 
+
+//
