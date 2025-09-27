@@ -34,10 +34,11 @@ func (g *gmailApartadoRepositoryDB) SendEmail(emailApartado model.EmailApartado)
 	m.SetHeader("From", g.emailSend)
 	m.SetHeader("To", emailApartado.EmailTo)
 	m.SetHeader("Subject", "Correo enviado de Magic Papers")
+	fmt.Println("Mensaje", emailApartado.Mensaje)
 	if emailApartado.TipoMensaje == "text/html" {
-		m.SetHeader("text/html", emailApartado.Mensaje)
+		m.SetBody("text/html", emailApartado.Mensaje)
 	} else {
-		m.SetHeader("text/plain", emailApartado.Mensaje)
+		m.SetBody("text/plain", emailApartado.Mensaje)
 	}
 
 	// Si hay imagen en Base64 → la agregamos como adjunto
