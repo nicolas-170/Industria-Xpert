@@ -14,7 +14,8 @@ CREATE TABLE producto (
   talla VARCHAR(10), 
   color VARCHAR(30),
   cantidad INT,
-  tipo VARCHAR(50)
+  tipo VARCHAR(50),
+  precio INT
 );
 
 CREATE TABLE contacto (
