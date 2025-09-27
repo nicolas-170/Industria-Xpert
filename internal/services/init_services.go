@@ -5,6 +5,7 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/nicolas-170/Industria-Xpert/cmd/logger"
+	"github.com/nicolas-170/Industria-Xpert/config"
 	clienteAdapter "github.com/nicolas-170/Industria-Xpert/internal/cliente/adapter"
 	clienteRepo "github.com/nicolas-170/Industria-Xpert/internal/cliente/adapter/repository"
 	clienteUsecase "github.com/nicolas-170/Industria-Xpert/internal/cliente/usecases"
@@ -21,22 +22,30 @@ import (
 	carritoRepo "github.com/nicolas-170/Industria-Xpert/internal/carrito/adapter/repository"
 	carritoUsecase "github.com/nicolas-170/Industria-Xpert/internal/carrito/usecases"
 
+	gmailApartadoAdapter "github.com/nicolas-170/Industria-Xpert/internal/gmail-apartado/adapter"
 	gmailApartadoRepo "github.com/nicolas-170/Industria-Xpert/internal/gmail-apartado/adapter/repository"
+	gmailApartadoUsecase "github.com/nicolas-170/Industria-Xpert/internal/gmail-apartado/usecases"
 )
 
-func Init(baseDeDatos *sql.DB, router fiber.Router) {
+func Init(baseDeDatos *sql.DB, router fiber.Router, cfg *config.Config) {
 	// Se inicializan repositorios, de uso por varios casos de uso
 	clienteRepo := clienteRepo.NewClienteRepository(baseDeDatos)
+	contactoRepo := contactoRepo.NewContactoRepository(baseDeDatos)
 	productoRepo := productoRepo.NewProductoRepository(baseDeDatos)
+	carritoRepo := carritoRepo.NewCarritoRepository(baseDeDatos)
+	gmailApartadoRepo := gmailApartadoRepo.NewGmailApartadoRepository(baseDeDatos, cfg.Email.EmailSend, cfg.Email.EmailPassword)
 
 	// Servicios de cliente
 	initCliente(router, clienteRepo)
 	// Servicios producto
 	initProducto(router, productoRepo)
 	// Servicios de contacto
-	initContacto(baseDeDatos, router)
+	initContacto(router, contactoRepo)
 	// Servicios de carrito
-	initCarrito(baseDeDatos, router, clienteRepo, productoRepo)
+	initCarrito(router, carritoRepo, clienteRepo, productoRepo)
+
+	// Servicios de gmail apartado
+	initGmailApartado(router, gmailApartadoRepo)
 }
 
 func initCliente(router fiber.Router, clienteRepo clienteRepo.ClienteRepository) {
@@ -72,9 +81,8 @@ func initProducto(router fiber.Router, productoRepo productoRepo.ProductoReposit
 	productoGroup.Delete("/", productoHandler.Delete)
 }
 
-func initContacto(baseDeDatos *sql.DB, router fiber.Router) {
+func initContacto(router fiber.Router, contactoRepo contactoRepo.ContactoRepository) {
 	logger.Info("Se inician servicios de contacto...")
-	contactoRepo := contactoRepo.NewContactoRepository(baseDeDatos)
 	contactoService := contactoUsecase.NewContactoService(contactoRepo)
 	contactoHandler := contactoAdapter.NewContactoHandler(contactoService)
 
@@ -86,9 +94,9 @@ func initContacto(baseDeDatos *sql.DB, router fiber.Router) {
 	contactoGroup.Delete("/", contactoHandler.Delete)
 }
 
-func initCarrito(baseDeDatos *sql.DB, router fiber.Router, clienteRepo clienteRepo.ClienteRepository, productoRepo productoRepo.ProductoRepository) {
+func initCarrito(router fiber.Router, carritoRepo carritoRepo.CarritoRepository, clienteRepo clienteRepo.ClienteRepository, productoRepo productoRepo.ProductoRepository) {
 	logger.Info("Se inician servicios de carrito...")
-	carritoRepo := carritoRepo.NewCarritoRepository(baseDeDatos)
+
 	carritoService := carritoUsecase.NewCarritoService(carritoRepo, productoRepo, clienteRepo)
 	carritoHandler := carritoAdapter.NewCarritoHandler(carritoService)
 
@@ -100,7 +108,12 @@ func initCarrito(baseDeDatos *sql.DB, router fiber.Router, clienteRepo clienteRe
 	carritoGroup.Delete("/", carritoHandler.Delete)
 }
 
-func initGmailApartado(baseDeDatos *sql.DB, router fiber.Router,gmailApartadoRepo gmailApartadoRepo.GmailApartadoRepository){
+func initGmailApartado(router fiber.Router, gmailApartadoRepo gmailApartadoRepo.GmailApartadoRepository) {
 	logger.Info("Se inicia servicios de gmail apartado...")
-	
+	gmailApartadoService := gmailApartadoUsecase.NewGmailApartadoService(gmailApartadoRepo)
+	gmailApartadoHandler := gmailApartadoAdapter.NewGmailApartadoHandler(gmailApartadoService)
+
+	gmailApartadoGroup := router.Group("/gmail-apartado")
+
+	gmailApartadoGroup.Post("/", gmailApartadoHandler.SendEmail)
 }

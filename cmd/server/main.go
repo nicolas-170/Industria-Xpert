@@ -35,7 +35,7 @@ func main() {
 	})
 
 	// Iniciamos los servicioa que vamos a consumir
-	services.Init(baseDeDatos, router)
+	services.Init(baseDeDatos, router, cfg)
 
 	// Añadinos en escucha el puerto definido en las ENV
 	logger.Fatal(appFiber.Listen(":" + cfg.Port))
