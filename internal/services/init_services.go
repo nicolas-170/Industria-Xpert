@@ -33,7 +33,7 @@ func Init(baseDeDatos *sql.DB, router fiber.Router, cfg *config.Config) {
 	contactoRepo := contactoRepo.NewContactoRepository(baseDeDatos)
 	productoRepo := productoRepo.NewProductoRepository(baseDeDatos)
 	carritoRepo := carritoRepo.NewCarritoRepository(baseDeDatos)
-	gmailApartadoRepo := gmailApartadoRepo.NewGmailApartadoRepository(baseDeDatos, cfg.Email.EmailSend, cfg.Email.EmailPassword)
+	gmailApartadoRepo := gmailApartadoRepo.NewGmailApartadoRepository(cfg.Email.EmailSend, cfg.Email.EmailPassword)
 
 	// Servicios de cliente
 	initCliente(router, clienteRepo)

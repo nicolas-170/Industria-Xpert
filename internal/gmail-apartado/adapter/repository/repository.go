@@ -1,12 +1,12 @@
 package repository
 
 import (
-	"database/sql"
-	"encoding/base64"
+	"bytes"
+	"encoding/json"
 	"fmt"
 	"io"
-
-	"gopkg.in/gomail.v2"
+	"net/http"
+	"os"
 
 	"github.com/nicolas-170/Industria-Xpert/internal/gmail-apartado/domain/model"
 )
@@ -16,47 +16,72 @@ type GmailApartadoRepository interface {
 }
 
 type gmailApartadoRepositoryDB struct {
-	db            *sql.DB
 	emailSend     string
 	emailPassword string
 }
 
-func NewGmailApartadoRepository(db *sql.DB, emailSend, emailPassword string) GmailApartadoRepository {
+func NewGmailApartadoRepository(emailSend, emailPassword string) GmailApartadoRepository {
 	return &gmailApartadoRepositoryDB{
-		db:            db,
 		emailSend:     emailSend,
 		emailPassword: emailPassword,
 	}
 }
 
+type resendRequest struct {
+	From    string   `json:"from"`
+	To      []string `json:"to"`
+	Subject string   `json:"subject"`
+	HTML    string   `json:"html,omitempty"`
+	Text    string   `json:"text,omitempty"`
+}
+
 func (g *gmailApartadoRepositoryDB) SendEmail(emailApartado model.EmailApartado) error {
-	m := gomail.NewMessage()
-	m.SetHeader("From", g.emailSend)
-	m.SetHeader("To", emailApartado.EmailTo)
-	m.SetHeader("Subject", "Correo enviado de Magic Papers")
-	fmt.Println("Mensaje", emailApartado.Mensaje)
+	apiKey := os.Getenv("RESEND_API_KEY")
+	if apiKey == "" {
+		return fmt.Errorf("RESEND_API_KEY no configurada")
+	}
+
+	reqBody := resendRequest{
+		From:    "Magic Papers <onboarding@resend.dev>",
+		To:      []string{emailApartado.EmailTo},
+		Subject: "Correo enviado de Magic Papers",
+	}
+
 	if emailApartado.TipoMensaje == "text/html" {
-		m.SetBody("text/html", emailApartado.Mensaje)
+		reqBody.HTML = emailApartado.Mensaje
 	} else {
-		m.SetBody("text/plain", emailApartado.Mensaje)
+		reqBody.Text = emailApartado.Mensaje
 	}
 
-	// Si hay imagen en Base64 → la agregamos como adjunto
-	if emailApartado.Imagen.ImagenBase64 != "" {
-		data, err := base64.StdEncoding.DecodeString(emailApartado.Imagen.ImagenBase64)
-		if err != nil {
-			return fmt.Errorf("error decodificando la imagen: %w", err)
-		}
-		nombre := emailApartado.Imagen.ImagenNombre
-		if nombre == "" {
-			nombre = "archivo.png"
-		}
-		m.Attach(nombre, gomail.SetCopyFunc(func(w io.Writer) error {
-			_, err := w.Write(data)
-			return err
-		}))
+	body, err := json.Marshal(reqBody)
+	if err != nil {
+		return err
 	}
 
-	connection := gomail.NewDialer("smtp.gmail.com", 587, g.emailSend, g.emailPassword)
-	return connection.DialAndSend(m)
+	req, err := http.NewRequest("POST", "https://api.resend.com/emails", bytes.NewBuffer(body))
+	if err != nil {
+		return err
+	}
+
+	req.Header.Set("Authorization", "Bearer "+apiKey)
+	req.Header.Set("Content-Type", "application/json")
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		bodyBytes, _ := io.ReadAll(resp.Body)
+		bodyString := string(bodyBytes)
+
+		if len(bodyString) > 0 {
+			return fmt.Errorf("error Resend API (%d): %s", resp.StatusCode, bodyString)
+		}
+		return fmt.Errorf("error Resend API (%d): %s", resp.StatusCode, resp.Status)
+	}
+
+	return nil
 }
