@@ -27,12 +27,18 @@ func NewGmailApartadoRepository(emailSend, emailPassword string) GmailApartadoRe
 	}
 }
 
+type resendAttachment struct {
+	Filename string `json:"filename"`
+	Content  string `json:"content"`
+}
+
 type resendRequest struct {
-	From    string   `json:"from"`
-	To      []string `json:"to"`
-	Subject string   `json:"subject"`
-	HTML    string   `json:"html,omitempty"`
-	Text    string   `json:"text,omitempty"`
+	From        string             `json:"from"`
+	To          []string           `json:"to"`
+	Subject     string             `json:"subject"`
+	HTML        string             `json:"html,omitempty"`
+	Text        string             `json:"text,omitempty"`
+	Attachments []resendAttachment `json:"attachments,omitempty"`
 }
 
 func (g *gmailApartadoRepositoryDB) SendEmail(emailApartado model.EmailApartado) error {
@@ -51,6 +57,20 @@ func (g *gmailApartadoRepositoryDB) SendEmail(emailApartado model.EmailApartado)
 		reqBody.HTML = emailApartado.Mensaje
 	} else {
 		reqBody.Text = emailApartado.Mensaje
+	}
+
+	if emailApartado.Imagen.ImagenBase64 != "" {
+		nombre := emailApartado.Imagen.ImagenNombre
+		if nombre == "" {
+			nombre = "archivo.png"
+		}
+
+		reqBody.Attachments = []resendAttachment{
+			{
+				Filename: nombre,
+				Content:  emailApartado.Imagen.ImagenBase64,
+			},
+		}
 	}
 
 	body, err := json.Marshal(reqBody)
